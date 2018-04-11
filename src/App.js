@@ -13,9 +13,16 @@ class App extends Component {
     this.logout = this.logout.bind(this);
     this.fetchSecureData = this.fetchSecureData.bind(this);
   }
+  componentDidMount() {
+    axios.get('/api/user-data').then(response => {
+      this.setState({ user: response.data.user || null });
+    });
+  }
 
-  login() {
-    alert('Need to implement the login() method in App.js!');
+  login = () => {
+    const callbackUrl = encodeURIComponent(window.location.origin + '/auth/callback')
+    
+    window.location = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/login?client=${process.env.REACT_APP_AUTH0_CLIENT_ID}&scope=openid%20profile%20email&redirect_uri=${callbackUrl}`
   }
 
   logout() {
@@ -23,6 +30,7 @@ class App extends Component {
       this.setState({ user: null });
     });
   }
+
 
   getMessage(error) {
     return error.response
